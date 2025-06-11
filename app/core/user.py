@@ -14,7 +14,7 @@ from app.core.config import settings
 from app.core.db import get_async_session
 from app.models.user import User
 from app.schemas.user import UserCreate
-from app.core.constants import TOKEN_URL
+from app.core.constants import TOKEN_URL, MIN_LEN_PASSWORD
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
@@ -38,19 +38,22 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         password: str,
         user: Union[UserCreate, User],
     ) -> None:
-        if len(password) < 3:
+        if len(password) < MIN_LEN_PASSWORD:
             raise InvalidPasswordException(
-                reason='Password should be at least 3 characters'
+                reason=(
+                    f'Пароль должен содержать не менее {MIN_LEN_PASSWORD} '
+                    'символов'
+                )
             )
         if user.email in password:
             raise InvalidPasswordException(
-                reason='Password should not contain e-mail'
+                reason='Пароль не должен содержать e-mail'
             )
 
     async def on_after_register(
             self, user: User, request: Optional[Request] = None
     ):
-        print(f'Пользователь {user.email} зарегистрирован.')
+        print(f'Пользователь {user.email} зарегистрирован')
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
