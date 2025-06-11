@@ -1,20 +1,21 @@
 from datetime import datetime as dt
 from typing import Optional
 
-from pydantic import BaseModel, PositiveInt, Field
+from pydantic import BaseModel, Field
+
 from app.core.constants import MIN_STR_LENGTH
+from app.schemas.base import CharityDonationBase, CharityDonationDBBase
 
 
 class DonationBase(BaseModel):
-    full_amount: PositiveInt
     comment: Optional[str] = Field(None, min_length=MIN_STR_LENGTH)
 
 
-class DonationCreate(DonationBase):
+class DonationCreate(CharityDonationBase, DonationBase):
     pass
 
 
-class DonationDBShort(DonationBase):
+class DonationDBShort(DonationBase, CharityDonationBase):
     id: int
     create_date: dt
 
@@ -22,11 +23,8 @@ class DonationDBShort(DonationBase):
         orm_mode = True
 
 
-class DonationDB(DonationDBShort):
+class DonationDB(DonationDBShort, CharityDonationDBBase):
     user_id: int
-    invested_amount: int
-    fully_invested: bool
-    close_date: Optional[dt]
 
     class Config:
         orm_mode = True

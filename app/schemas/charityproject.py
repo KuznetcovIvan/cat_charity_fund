@@ -1,8 +1,9 @@
-from datetime import datetime as dt
 from typing import Optional
 
 from pydantic import BaseModel, Field, PositiveInt, validator
+
 from app.core.constants import MAX_LEN_PROJECTNAME, MIN_STR_LENGTH
+from app.schemas.base import CharityDonationBase, CharityDonationDBBase
 
 
 class CharityProjectBase(BaseModel):
@@ -10,10 +11,9 @@ class CharityProjectBase(BaseModel):
         None, min_length=MIN_STR_LENGTH, max_length=MAX_LEN_PROJECTNAME
     )
     description: Optional[str] = Field(None, min_length=MIN_STR_LENGTH)
-    full_amount: Optional[PositiveInt]
 
 
-class CharityProjectCreate(CharityProjectBase):
+class CharityProjectCreate(CharityProjectBase, CharityDonationBase):
     name: str = Field(
         ..., min_length=MIN_STR_LENGTH, max_length=MAX_LEN_PROJECTNAME
     )
@@ -22,7 +22,7 @@ class CharityProjectCreate(CharityProjectBase):
 
 
 class CharityProjectUpdate(CharityProjectBase):
-    pass
+    full_amount: Optional[PositiveInt]
 
     @validator('name', 'description', 'full_amount')
     def check_not_none(cls, value):
@@ -31,12 +31,5 @@ class CharityProjectUpdate(CharityProjectBase):
         return value
 
 
-class CharityProjectDB(CharityProjectBase):
+class CharityProjectDB(CharityProjectBase, CharityDonationDBBase):
     id: int
-    invested_amount: int
-    fully_invested: bool
-    create_date: dt
-    close_date: Optional[dt]
-
-    class Config:
-        orm_mode = True

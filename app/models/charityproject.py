@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Text
 
-from app.models.base import BaseModel
 from app.core.constants import MAX_LEN_PROJECTNAME
+from app.models.base import BaseModel
 
 
 class CharityProject(BaseModel):
