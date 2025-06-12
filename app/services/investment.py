@@ -1,0 +1,2 @@
+async def invest():
+    pass
