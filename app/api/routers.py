@@ -7,7 +7,7 @@ from app.api.endpoints.user import router as user_router
 main_router = APIRouter()
 main_router.include_router(
     charityproject_router,
-    prefix='/charity_projects',
+    prefix='/charity_project',
     tags=['charity_projects']
 )
 main_router.include_router(
