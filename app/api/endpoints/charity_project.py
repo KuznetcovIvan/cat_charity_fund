@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_name_duplicate
+from app.api.validators import (check_charity_project_exists,
+                                check_name_duplicate)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charity_project import charity_project_crud
@@ -33,3 +34,18 @@ async def get_all_charity_project(
     session: AsyncSession = Depends(get_async_session)
 ):
     return await charity_project_crud.get_multi(session)
+
+
+@router.delete(
+    '/{project_id}',
+    response_model=CharityProjectDB,
+    response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)]
+)
+async def remove_charity_project(
+    project_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    return await charity_project_crud.remove(
+        await check_charity_project_exists(project_id, session), session
+    )

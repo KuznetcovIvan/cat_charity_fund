@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field, PositiveInt, validator, Extra
+from pydantic import BaseModel, Extra, Field, PositiveInt, validator
 
 from app.core.constants import MAX_LEN_PROJECTNAME, MIN_STR_LENGTH
 from app.schemas.base import CharityDonationBase, CharityDonationDBBase
