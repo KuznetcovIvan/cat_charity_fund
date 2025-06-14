@@ -1,10 +1,12 @@
 from datetime import datetime as dt
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Union
-from app.models.charity_project import CharityProject
-from app.models.donation import Donation
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.crud.charity_project import charity_project_crud
 from app.crud.donation import donation_crud
+from app.models.charity_project import CharityProject
+from app.models.donation import Donation
 
 
 async def invest(
