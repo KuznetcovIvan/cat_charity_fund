@@ -5,6 +5,8 @@ from pydantic import BaseModel, Extra, Field, PositiveInt, validator
 from app.core.constants import MAX_LEN_PROJECTNAME, MIN_STR_LENGTH
 from app.schemas.base import CharityDonationBase, CharityDonationDBBase
 
+FIELD_CANT_BE_EMPTY = 'Поле не может быть пустым!'
+
 
 class CharityProjectBase(BaseModel):
     name: Optional[str] = Field(
@@ -29,7 +31,7 @@ class CharityProjectUpdate(CharityProjectBase):
     @validator('name', 'description', 'full_amount')
     def check_not_none(cls, value):
         if value is None:
-            raise ValueError('Поле не может быть пустым!')
+            raise ValueError(FIELD_CANT_BE_EMPTY)
         return value
 
 

@@ -21,6 +21,10 @@ from app.core.db import get_async_session
 from app.models.user import User
 from app.schemas.user import UserCreate
 
+PASSWORD_TOO_SHORT = 'Пароль должен содержать не менее {} символов'
+PASSWORD_CONTAINS_EMAIL = 'Пароль не должен содержать e-mail'
+REGISTERED_MESSAGE = 'Пользователь {} зарегистрирован'
+
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
@@ -45,20 +49,15 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ) -> None:
         if len(password) < MIN_LEN_PASSWORD:
             raise InvalidPasswordException(
-                reason=(
-                    f'Пароль должен содержать не менее {MIN_LEN_PASSWORD} '
-                    'символов'
-                )
+                reason=PASSWORD_TOO_SHORT.format(MIN_LEN_PASSWORD)
             )
         if user.email in password:
-            raise InvalidPasswordException(
-                reason='Пароль не должен содержать e-mail'
-            )
+            raise InvalidPasswordException(reason=PASSWORD_CONTAINS_EMAIL)
 
     async def on_after_register(
             self, user: User, request: Optional[Request] = None
     ):
-        print(f'Пользователь {user.email} зарегистрирован')
+        print(REGISTERED_MESSAGE.format(user.email))
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

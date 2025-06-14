@@ -30,9 +30,9 @@ class CRUDBase:
             attr_value: str,
             session: AsyncSession,
     ):
-        attr = getattr(self.model, attr_name)
         db_obj = await session.execute(
-            select(self.model).where(attr == attr_value)
+            select(self.model)
+            .where(getattr(self.model, attr_name) == attr_value)
         )
         return db_obj.scalars().first()
 
