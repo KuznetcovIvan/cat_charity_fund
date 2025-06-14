@@ -33,7 +33,7 @@ async def create_new_charity_project(
     response_model=list[CharityProjectDB],
     response_model_exclude_none=True
 )
-async def get_all_charity_project(
+async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session)
 ):
     return await charity_project_crud.get_multi(session)

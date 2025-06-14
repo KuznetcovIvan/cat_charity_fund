@@ -6,6 +6,10 @@ from pydantic import BaseModel, Field
 from app.core.constants import MIN_STR_LENGTH
 from app.schemas.base import CharityDonationBase, CharityDonationDBBase
 
+CURRENT_USER_EXCLUDE = {
+    'user_id', 'invested_amount', 'fully_invested', 'close_date'
+}
+
 
 class DonationBase(BaseModel):
     comment: Optional[str] = Field(None, min_length=MIN_STR_LENGTH)
