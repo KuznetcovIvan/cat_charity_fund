@@ -5,6 +5,7 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.schemas.donation import DonationDB, DonationDBShort, DonationCreate
 from app.models.user import User
+from app.services.investment import invest
 
 
 router = APIRouter()
@@ -32,7 +33,9 @@ async def create_new_donation(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user)
 ):
-    return await donation_crud.create(donation, session, user)
+    return await invest(
+        await donation_crud.create(donation, session, user), session
+    )
 
 
 @router.get(

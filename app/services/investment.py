@@ -11,25 +11,31 @@ async def invest(
     new_object: Union[CharityProject, Donation],
     session: AsyncSession
 ) -> Union[CharityProject, Donation]:
-    is_project = isinstance(new_object, CharityProject)
-    crud = charity_project_crud if is_project else donation_crud
+    crud = (
+        donation_crud if isinstance(new_object, CharityProject)
+        else charity_project_crud
+    )
     open_objects = await crud.get_not_fully_invested(session)
-    available_amount = new_object.full_amount - new_object.invested_amount
+    if not open_objects:
+        return new_object
     for obj in open_objects:
-        to_invest = min(
-            obj.full_amount - obj.invested_amount, available_amount
-        )
-        obj.invested_amount += to_invest
-        new_object.invested_amount += to_invest
-        available_amount -= to_invest
+        target_need = obj.full_amount - obj.invested_amount
+        source_available = new_object.full_amount - new_object.invested_amount
+        if source_available <= 0:
+            break
+        invest_amount = min(target_need, source_available)
+        obj.invested_amount += invest_amount
+        new_object.invested_amount += invest_amount
         if obj.invested_amount == obj.full_amount:
             obj.fully_invested = True
             obj.close_date = dt.now()
-        if available_amount == 0:
+        if new_object.invested_amount == new_object.full_amount:
+            new_object.fully_invested = True
+            new_object.close_date = dt.now()
+            session.add(obj)
             break
-    if new_object.invested_amount == new_object.full_amount:
-        new_object.fully_invested = True
-        new_object.close_date = dt.now()
+        session.add(obj)
+    session.add(new_object)
     await session.commit()
     await session.refresh(new_object)
     return new_object
