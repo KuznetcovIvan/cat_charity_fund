@@ -25,7 +25,7 @@ async def get_all_donations(
 @router.post(
     '/',
     response_model=DonationDBShort,
-    response_model_exclude_none=True,
+    response_model_exclude_none=True
 )
 async def create_new_donation(
     donation: DonationCreate,
@@ -33,3 +33,15 @@ async def create_new_donation(
     user: User = Depends(current_user)
 ):
     return await donation_crud.create(donation, session, user)
+
+
+@router.get(
+    '/my',
+    response_model=list[DonationDBShort],
+    response_model_exclude_none=True
+)
+async def get_user_donations(
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user)
+):
+    return await donation_crud.get_by_user(user, session)
