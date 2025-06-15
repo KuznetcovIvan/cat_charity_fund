@@ -7,7 +7,6 @@ from app.crud.charity_project import charity_project_crud
 from app.models.charity_project import CharityProject
 from app.schemas.charity_project import CharityProjectUpdate
 
-
 PROJECT_NAME_EXISTS = 'Проект с таким именем уже существует!'
 PROJECT_NOT_FOUND = 'Проект не найден!'
 CANT_DELETE_INVESTED_PROJECT = (

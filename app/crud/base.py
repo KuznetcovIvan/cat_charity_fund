@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
+from app.services.utils import check_and_update_investment_status
 
 
 class CRUDBase:
@@ -66,10 +67,10 @@ class CRUDBase:
     ):
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(exclude_unset=True)
-
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
+        check_and_update_investment_status(db_obj)
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)

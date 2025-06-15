@@ -5,8 +5,8 @@ from logging.config import fileConfig
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
-from alembic import context
 
+from alembic import context
 from app.core.base import Base
 
 load_dotenv('.env')
