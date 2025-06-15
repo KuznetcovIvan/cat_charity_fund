@@ -9,5 +9,3 @@ exclude =
    venv
    env
    alembic/versions/*.py
-per-file-ignores =
-    app/core/base.py: F401
