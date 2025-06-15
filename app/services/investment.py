@@ -20,23 +20,23 @@ async def invest(
     open_objects = await crud.get_not_fully_invested(session)
     if not open_objects:
         return new_object
-    for obj in open_objects:
-        target_need = obj.full_amount - obj.invested_amount
+    for object in open_objects:
+        target_need = object.full_amount - object.invested_amount
         source_available = new_object.full_amount - new_object.invested_amount
         if source_available <= 0:
             break
         invest_amount = min(target_need, source_available)
-        obj.invested_amount += invest_amount
+        object.invested_amount += invest_amount
         new_object.invested_amount += invest_amount
-        if obj.invested_amount == obj.full_amount:
-            obj.fully_invested = True
-            obj.close_date = dt.now()
+        if object.invested_amount == object.full_amount:
+            object.fully_invested = True
+            object.close_date = dt.now()
         if new_object.invested_amount == new_object.full_amount:
             new_object.fully_invested = True
             new_object.close_date = dt.now()
-            session.add(obj)
+            session.add(object)
             break
-        session.add(obj)
+        session.add(object)
     session.add(new_object)
     await session.commit()
     await session.refresh(new_object)
