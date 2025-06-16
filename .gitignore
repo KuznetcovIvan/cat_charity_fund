@@ -133,3 +133,5 @@ dmypy.json
 
 # fastapi_db
 *.db
+
+desktop.ini
