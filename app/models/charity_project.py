@@ -7,3 +7,6 @@ from app.models.base import CharityDonationBase
 class CharityProject(CharityDonationBase):
     name = Column(String(MAX_LEN_PROJECTNAME), unique=True, nullable=False)
     description = Column(Text, nullable=False)
+
+    def __repr__(self):
+        return f'{super().__repr__()[:-1]}, name=\'{self.name}\''
