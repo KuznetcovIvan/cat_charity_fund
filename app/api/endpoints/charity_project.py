@@ -9,6 +9,7 @@ from app.api.validators import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charity_project import charity_project_crud
+from app.crud.donation import donation_crud
 from app.schemas.charity_project import (
     CharityProjectCreate,
     CharityProjectDB,
@@ -30,9 +31,16 @@ async def create_new_charity_project(
     session: AsyncSession = Depends(get_async_session)
 ):
     await check_name_duplicate(charity_project.name, session)
-    return await invest(
-        await charity_project_crud.create(charity_project, session), session
+    new_project = await charity_project_crud.create(
+        charity_project, session, commit=False
     )
+    session.add_all(invest(
+        new_project,
+        await donation_crud.get_not_fully_invested(session)
+    ))
+    await session.commit()
+    await session.refresh(new_project)
+    return new_project
 
 
 @router.get(

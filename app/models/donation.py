@@ -16,4 +16,4 @@ class Donation(CharityDonationBase):
     user = relationship('User')
 
     def __repr__(self):
-        return f'{super().__repr__()[:-1]}, username=\'{self.user.email}\''
+        return f'{super().__repr__()}, {self.user.email=}'

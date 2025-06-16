@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
@@ -5,7 +6,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
-from app.services.utils import check_and_update_investment_status
 
 
 class CRUDBase:
@@ -55,6 +55,8 @@ class CRUDBase:
         if user is not None:
             obj_in_data['user_id'] = user.id
         db_obj = self.model(**obj_in_data)
+        if db_obj.invested_amount is None:
+            db_obj.invested_amount = 0
         session.add(db_obj)
         if commit:
             await session.commit()
@@ -72,7 +74,9 @@ class CRUDBase:
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
-        check_and_update_investment_status(db_obj)
+        if db_obj.invested_amount == db_obj.full_amount:
+            db_obj.fully_invested = True
+            db_obj.close_date = dt.now()
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
